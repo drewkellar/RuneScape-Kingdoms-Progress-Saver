@@ -1,0 +1,44 @@
+.print-summary {
+  display: none;
+}
+.skill-info,
+.resource,
+.vitals > div,
+label {
+  font-size: 14px;
+}
+.card-effects {
+  font-size: 14px;
+}
+@media print {
+  .sheet-grid,
+  .character-heading,
+  .breadcrumb {
+    display: none !important;
+  }
+  .print-summary {
+    display: block;
+  }
+  .print-summary h1 {
+    margin-bottom: 12px;
+  }
+  .print-summary h2 {
+    margin: 20px 0 10px;
+    border-bottom: 1px solid #aaa;
+    padding-bottom: 6px;
+  }
+  .print-summary p {
+    font-size: 12px;
+    white-space: pre-wrap;
+    margin: 5px 0;
+  }
+  .print-summary article {
+    break-inside: avoid;
+    margin-top: 14px;
+  }
+  .print-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 24px;
+  }
+}
