@@ -17,6 +17,7 @@ import type { Engine } from '../data/engine';
 import { getPortrait } from '../data/storage';
 import { supabase } from '../data/client';
 import Icon from './Icon';
+import PaperSheet from './PaperSheet';
 import { Counter, Empty, TextEditor } from './components';
 export function Portrait({
   character,
@@ -94,27 +95,10 @@ export default function Sheet({ engine, character: c, run, edit, download }: Pro
       <div className="breadcrumb">
         YOUR ADVENTURE <span>/</span> CHARACTER SHEET
       </div>
-      <section className="character-heading">
-        <button
-          className="portrait-button"
-          disabled={!canEdit}
-          onClick={() => edit('portrait')}
-          aria-label="Change character portrait"
-        >
-          <Portrait character={c} engine={engine} large />
-          <span>
-            <ImagePlus size={14} />
-          </span>
-        </button>
-        <div className="character-title">
-          <div className="eyebrow">SHADOW OF ELVARG</div>
-          <h1>{s.name}</h1>
-          <p>
-            <span className="online-dot" /> {owner}
-            {c.owner_id === engine.account ? ' · Your character' : ''}{' '}
-            <span className="sep">|</span> Total level <b>{total}</b>
-          </p>
-        </div>
+      <div className="sheet-toolbar">
+        <p>
+          {owner} · Total level <b>{total}</b>
+        </p>
         <div className="heading-actions">
           <button onClick={download}>
             <Download size={16} /> Download
@@ -127,16 +111,12 @@ export default function Sheet({ engine, character: c, run, edit, download }: Pro
             <Printer size={17} />
           </button>
           {canEdit && (
-            <button
-              className="icon-button"
-              onClick={() => edit('correction')}
-              aria-label="Correct character values"
-            >
-              <Pencil size={17} />
+            <button onClick={() => edit('correction')} aria-label="Correct character values">
+              <Pencil size={16} /> Correct values
             </button>
           )}
         </div>
-      </section>
+      </div>
       {!s.autoLevel && (
         <div className="notice compact">
           <BookOpen size={17} />
@@ -144,112 +124,9 @@ export default function Sheet({ engine, character: c, run, edit, download }: Pro
           {canEdit && <button onClick={() => edit('rules')}>Review rules</button>}
         </div>
       )}
+      <PaperSheet character={c} engine={engine} run={run} edit={edit} />
       <div className="sheet-grid">
         <div className="sheet-main">
-          <section className="panel">
-            <div className="panel-heading">
-              <h2>
-                <Icon name="xp" /> Skills & experience
-              </h2>
-              <span className="muted">{s.autoLevel ? '3 XP → 1 level' : 'Manual progression'}</span>
-            </div>
-            <div className="skills-grid">
-              {skills.map((k) => (
-                <div className={`skill skill-${k}`} key={k}>
-                  <div className="skill-icon">
-                    <Icon name={k} />
-                  </div>
-                  <div className="skill-info">
-                    <span>{labels[k]}</span>
-                    <div className="xp-track" aria-label={`${s.skills[k].xp} XP`}>
-                      {[0, 1, 2].map((i) => (
-                        <i key={i} className={s.skills[k].xp > i ? 'filled' : ''} />
-                      ))}
-                      <small>{s.skills[k].xp} XP</small>
-                    </div>
-                  </div>
-                  <div className="skill-level">
-                    <strong>{s.skills[k].level}</strong>
-                    <small>LEVEL</small>
-                  </div>
-                  <button
-                    className="xp-button"
-                    disabled={!canEdit || (s.autoLevel && s.skills[k].level === 99)}
-                    onClick={() =>
-                      run(() =>
-                        engine.enqueue(c, { kind: 'xp', key: k, delta: 1 }, `+1 ${labels[k]} XP`),
-                      )
-                    }
-                    aria-label={`Add 1 ${labels[k]} XP`}
-                  >
-                    <Plus size={14} />
-                    <span>XP</span>
-                  </button>
-                </div>
-              ))}
-            </div>
-            <div className="panel-foot">
-              Every small adventure adds up.{' '}
-              <span>
-                {s.autoLevel
-                  ? 'Levels update automatically.'
-                  : 'Set starting levels with the correction tool.'}
-              </span>
-            </div>
-          </section>
-          <section className="panel resources-panel">
-            <div className="panel-heading">
-              <h2>
-                <Icon name="coins" /> Pouch & supplies
-              </h2>
-              {canEdit && (
-                <button className="text-button" onClick={() => edit('resource')}>
-                  <Plus size={15} /> Add resource
-                </button>
-              )}
-            </div>
-            <div className="resource-grid">
-              {Object.entries(s.resources).map(([key, value]) => (
-                <div className="resource" key={key}>
-                  <span className={`resource-icon ${key}`}>
-                    <Icon name={key} />
-                  </span>
-                  <span>{labels[key] || key}</span>
-                  <Counter
-                    label={labels[key] || key}
-                    value={value}
-                    disabled={!canEdit}
-                    onChange={(delta) =>
-                      run(() =>
-                        engine.enqueue(
-                          c,
-                          { kind: 'resource', key, delta },
-                          `${delta > 0 ? '+' : ''}${delta} ${labels[key] || key}`,
-                        ),
-                      )
-                    }
-                  />
-                  {canEdit && (
-                    <button
-                      className="quick-two"
-                      onClick={() =>
-                        run(() =>
-                          engine.enqueue(
-                            c,
-                            { kind: 'resource', key, delta: 2 },
-                            `+2 ${labels[key] || key}`,
-                          ),
-                        )
-                      }
-                      aria-label={`Add 2 ${labels[key] || key}`}
-                    >
-                      +2
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
           <section className="panel inventory-panel">
             <div className="tab-heading">
               <div role="tablist" aria-label="Character details">
@@ -382,7 +259,7 @@ export default function Sheet({ engine, character: c, run, edit, download }: Pro
               </h2>
             </div>
             <div className="vitals">
-              {(['wounds', 'deaths', 'sideQuests', 'hitpoints'] as const).map((k) => (
+              {(['hitpoints'] as const).map((k) => (
                 <div key={k}>
                   <span>
                     {

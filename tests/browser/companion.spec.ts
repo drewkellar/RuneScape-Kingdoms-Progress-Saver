@@ -45,6 +45,14 @@ test('local character survives refresh, undo, checkpoint restore, export and imp
   await page.reload();
   await page.getByRole('button', { name: 'Try on this device' }).click();
   await expect(page.getByRole('heading', { name: 'Aria', exact: true })).toBeVisible();
+  await expect(page.locator('.skill-attack .xp-slot')).toHaveCount(2);
+  await page.getByRole('checkbox', { name: 'Reach level 8 in any skill.', exact: true }).check();
+  await expect(page.getByText('Saved on this device', { exact: true })).toBeVisible();
+  await page.reload();
+  await page.getByRole('button', { name: 'Try on this device' }).click();
+  await expect(
+    page.getByRole('checkbox', { name: 'Reach level 8 in any skill.', exact: true }),
+  ).toBeChecked();
   await page.setViewportSize({ width: 1440, height: 1050 });
   await page.screenshot({ path: 'test-results/character-sheet.png', fullPage: true });
 });

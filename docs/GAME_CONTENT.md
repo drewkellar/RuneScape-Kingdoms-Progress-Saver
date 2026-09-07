@@ -1,6 +1,6 @@
 # Provisional content and verification checklist
 
-The user's physical released rules are the authority. They have been requested but not supplied yet.
+The user’s physical released rules are the authority. The character sheet was supplied on September 7, 2026 and now determines the online sheet layout, skill labels, two XP slots, cape objectives, and side-quest reference text. The complete released XP rules paragraph is still needed to finalize automated progression.
 
 Sources consulted:
 
