@@ -670,39 +670,54 @@
   flex-shrink: 0;
 }
 
-/* Pair resources while keeping each item's controls directly below its name. */
+/* Keep each resource on one line, with a continuous divider between columns. */
 .paper-resources {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 12px;
+  column-gap: 12px;
+  background: linear-gradient(#a8925b88, #a8925b88) center / 1px 100% no-repeat;
 }
-.paper-resources .paper-resource {
-  display: grid;
-  grid-template-columns: 22px minmax(0, 1fr);
-  gap: 6px 5px;
+.paper-resources .paper-resource.resource {
+  container-type: inline-size;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 3px;
   min-width: 0;
-  align-content: start;
+  border: 0;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.paper-resources .paper-resource > :is(svg, img) {
+  width: clamp(10px, 12cqw, 22px);
+  height: clamp(10px, 12cqw, 22px);
 }
 .paper-resources .paper-resource > span {
   min-width: 0;
+  font-size: clamp(7px, 7.5cqw, 12px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .paper-resources .counter {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) 24px;
-  gap: 3px;
-  width: 100%;
-  max-width: 124px;
+  display: flex;
+  flex: 0 0 auto;
+  gap: clamp(1px, 1cqw, 3px);
+  width: auto;
 }
 .paper-resources .counter button {
-  width: 24px;
-  height: 26px;
-  min-height: 26px;
+  width: clamp(12px, 12cqw, 22px);
+  height: clamp(16px, 15cqw, 26px);
+  min-height: 0;
   padding: 0;
 }
+.paper-resources .counter button svg {
+  width: 80%;
+  height: 80%;
+}
 .paper-resources .counter strong {
-  font-size: 14px;
-  min-width: 0;
+  font-size: clamp(7px, 7.5cqw, 12px);
+  min-width: 1.2em;
   text-align: center;
 }
 @media (max-width: 760px) {
