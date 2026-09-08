@@ -7,8 +7,13 @@ describe('Character rules and backups', () => {
     const state = newState('Aria');
     expect(Object.keys(state.resources)).toHaveLength(11);
     expect(state.resources).not.toHaveProperty('flax');
-    const restored = stateSchema.parse({ ...state, resources: { wood: 7, flax: 3, crystal: 9 } });
+    const restored = stateSchema.parse({
+      ...state,
+      resources: { wood: 7, flax: 3, crystal: 9, rawFish: 2, food: 4 },
+    });
     expect(restored.resources).toMatchObject({ wood: 7, ore: 0, cherries: 0, flax: 3, crystal: 9 });
+    expect(restored.resources).not.toHaveProperty('rawFish');
+    expect(restored.resources).not.toHaveProperty('food');
     expect(stateSchema.parse(restored)).toEqual(restored);
   });
   it('awards resources without counting token faces', () => {

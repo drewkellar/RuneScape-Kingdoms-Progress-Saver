@@ -283,7 +283,9 @@ export default function Dialogs({ modal, engine, groupId, close, notify, go, sig
             onChange={(e) => setCard({ ...card, kind: e.target.value as Card['kind'] })}
           >
             {['weapon', 'armour', 'accessory', 'cape', 'recipe', 'quest', 'other'].map((k) => (
-              <option key={k}>{k}</option>
+              <option key={k} value={k}>
+                {k[0].toUpperCase() + k.slice(1)}
+              </option>
             ))}
           </select>
         </label>

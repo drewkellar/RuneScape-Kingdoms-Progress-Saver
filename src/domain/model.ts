@@ -76,7 +76,12 @@ export const stateSchema = z
       .strict(),
     resources: z
       .record(z.string().regex(/^[a-zA-Z][a-zA-Z0-9]{0,39}$/), count)
-      .transform((saved) => ({ ...Object.fromEntries(resources.map((key) => [key, 0])), ...saved }))
+      .transform((saved) => {
+        const current = { ...saved };
+        delete current.rawFish;
+        delete current.food;
+        return { ...Object.fromEntries(resources.map((key) => [key, 0])), ...current };
+      })
       .refine((r) => Object.keys(r).length <= 50),
     wounds: count,
     deaths: count,

@@ -68,7 +68,8 @@ const customIcons = Object.fromEntries(
     ]),
 );
 export default function Icon({ name, size = 22 }: { name: string; size?: number }) {
-  const src = customIcons[name.toLowerCase()];
+  const aliases: Record<string, string> = { attack: 'melee', bars: 'bar' };
+  const src = customIcons[name.toLowerCase()] || customIcons[aliases[name]];
   const [failed, setFailed] = useState<string>();
   if (src && failed !== src)
     return (

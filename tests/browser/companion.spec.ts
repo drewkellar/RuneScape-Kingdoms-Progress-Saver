@@ -153,7 +153,7 @@ test('confirmed XP rolls over and sheet controls match the requested behavior', 
   await expect(page.locator('.skill-attack .xp-slot.filled')).toHaveCount(0);
 });
 
-test('default resources and complete desktop sheet keep GP and XP controls in place', async ({
+test('default resources and original-size sheet keep GP and XP controls in place', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -163,26 +163,33 @@ test('default resources and complete desktop sheet keep GP and XP controls in pl
   await page.getByLabel('Character name', { exact: true }).fill('Compact sheet');
   await page.getByLabel('Character name', { exact: true }).press('Enter');
   await expect(page.locator('.paper-supplies .paper-resource')).toHaveCount(10);
+  for (const selector of ['.skill-attack', '.skill-thieving', '.paper-supplies .paper-resource']) {
+    const icon = page.locator(selector).first().locator('img.custom-game-icon');
+    await expect(icon).toBeVisible();
+    expect(
+      await icon.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0),
+    ).toBeTruthy();
+  }
   for (const viewport of [
     { width: 1440, height: 900 },
     { width: 1280, height: 720 },
   ]) {
     await page.setViewportSize(viewport);
-    await expect
-      .poll(async () => {
-        const box = await page.locator('.physical-frame').boundingBox();
-        return (
-          !!box && box.x + box.width <= viewport.width && box.y + box.height <= viewport.height
-        );
-      })
-      .toBeTruthy();
+    expect(await page.locator('.physical-frame').evaluate((el) => getComputedStyle(el).zoom)).toBe(
+      '1',
+    );
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+    ).toBeTruthy();
     const gp = (await page.locator('.paper-gp').boundingBox())!;
     const benefits = (await page.locator('.quest-benefits').boundingBox())!;
     expect(gp.y - benefits.y - benefits.height).toBeLessThan(30);
     const slots = (await page.locator('.skill-attack .paper-xp').boundingBox())!;
     const plus = (await page.locator('.skill-attack .paper-award').boundingBox())!;
+    const header = (await page.locator('.paper-skills > .ribbon').boundingBox())!;
+    expect(Math.abs(plus.x + plus.width - header.x - header.width)).toBeLessThan(2);
     expect(plus.x).toBeGreaterThanOrEqual(slots.x + slots.width);
     expect(Math.abs(plus.y + plus.height / 2 - slots.y - slots.height / 2)).toBeLessThan(2);
   }
-  await page.screenshot({ path: 'test-results/compact-sheet.png', fullPage: false });
+  await page.screenshot({ path: 'test-results/original-sheet.png', fullPage: true });
 });
