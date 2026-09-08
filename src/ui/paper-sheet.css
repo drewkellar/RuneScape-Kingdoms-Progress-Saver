@@ -689,12 +689,12 @@
   padding-bottom: 8px;
 }
 .paper-resources .paper-resource > :is(svg, img) {
-  width: clamp(10px, 12cqw, 22px);
-  height: clamp(10px, 12cqw, 22px);
+  width: clamp(12px, 14cqw, 24px);
+  height: clamp(12px, 14cqw, 24px);
 }
 .paper-resources .paper-resource > span {
   min-width: 0;
-  font-size: clamp(7px, 7.5cqw, 12px);
+  font-size: clamp(8px, 9cqw, 14px);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -702,12 +702,12 @@
 .paper-resources .counter {
   display: flex;
   flex: 0 0 auto;
-  gap: clamp(1px, 1cqw, 3px);
+  gap: clamp(2px, 1.5cqw, 4px);
   width: auto;
 }
 .paper-resources .counter button {
-  width: clamp(12px, 12cqw, 22px);
-  height: clamp(16px, 15cqw, 26px);
+  width: clamp(14px, 15cqw, 28px);
+  height: clamp(20px, 19cqw, 32px);
   min-height: 0;
   padding: 0;
 }
@@ -716,7 +716,7 @@
   height: 80%;
 }
 .paper-resources .counter strong {
-  font-size: clamp(7px, 7.5cqw, 12px);
+  font-size: clamp(8px, 9cqw, 14px);
   min-width: 1.2em;
   text-align: center;
 }
