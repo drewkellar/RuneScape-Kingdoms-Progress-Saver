@@ -86,6 +86,18 @@ export const stateSchema = z
       });
     if (new Set(s.cards.map((c) => c.id)).size !== s.cards.length)
       ctx.addIssue({ code: 'custom', message: 'Duplicate held card IDs' });
+  })
+  .transform((s) => {
+    // Upgrade older manual-XP saves once, preserving earned levels and remaining tokens.
+    if (!s.autoLevel) {
+      for (const key of skills) {
+        const skill = s.skills[key];
+        skill.level = Math.min(99, skill.level + Math.floor(skill.xp / 3));
+        skill.xp = skill.level === 99 ? 0 : skill.xp % 3;
+      }
+      s.autoLevel = true;
+    }
+    return s;
   });
 export type State = z.infer<typeof stateSchema>;
 export const cardSchema = z
@@ -189,12 +201,12 @@ export function newState(name: string): State {
     hitpoints: 0,
     capeNotes: '',
     cards: [],
-    autoLevel: false,
+    autoLevel: true,
     ruleset: RULESET,
   });
 }
 export function applyOperation(state: State, operation: Operation): State {
-  const s = structuredClone(state);
+  const s = stateSchema.parse(state);
   if (operation.kind === 'replace') return stateSchema.parse(operation.state);
   if (operation.kind === 'resource') {
     if (
@@ -223,14 +235,14 @@ export function previewOperation(cache: Cache, character: Character, operation: 
     );
     if (!a || a.revision !== character.revision)
       throw Error('This action has newer changes. Use a correction instead.');
-    return a.before_state;
+    return stateSchema.parse(a.before_state);
   }
   if (operation.kind === 'restore') {
     const cp = cache.checkpoints.find(
       (c) => c.id === operation.checkpointId && c.character_id === character.id,
     );
     if (!cp) throw Error('Checkpoint is unavailable');
-    return cp.state;
+    return stateSchema.parse(cp.state);
   }
   return applyOperation(character.state, operation);
 }

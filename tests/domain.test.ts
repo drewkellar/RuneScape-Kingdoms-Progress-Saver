@@ -7,12 +7,12 @@ describe('Character rules and backups', () => {
     const s = applyOperation(newState('Aria'), { kind: 'resource', key: 'wood', delta: 2 });
     expect(s.resources.wood).toBe(2);
   });
-  it('keeps unverified XP manual', () => {
+  it('rolls the third XP into a level by default', () => {
     const s = newState('Aria');
     s.skills.attack.xp = 2;
     expect(applyOperation(s, { kind: 'xp', key: 'attack', delta: 1 }).skills.attack).toEqual({
-      level: 1,
-      xp: 3,
+      level: 2,
+      xp: 0,
     });
   });
   it('levels with remainder and caps at 99 after confirmation', () => {
@@ -75,4 +75,13 @@ describe('Character rules and backups', () => {
     });
     expect(() => makeBackup(emptyCache(), [c])).toThrow();
   });
+});
+
+it('converts legacy manual XP without double leveling on reload', () => {
+  const s = newState('Legacy');
+  s.autoLevel = false;
+  s.skills.attack = { level: 4, xp: 8 };
+  const upgraded = stateSchema.parse(s);
+  expect(upgraded.skills.attack).toEqual({ level: 6, xp: 2 });
+  expect(stateSchema.parse(upgraded)).toEqual(upgraded);
 });

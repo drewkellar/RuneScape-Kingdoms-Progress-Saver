@@ -90,14 +90,6 @@ export default function PaperSheet({
         disabled={!editable}
         onChange={(d) => resource(key, d)}
       />
-      <button
-        className="quick-two"
-        disabled={!editable}
-        aria-label={`Add 2 ${labels[key] || key}`}
-        onClick={() => resource(key, 2)}
-      >
-        +2
-      </button>
     </div>
   );
   return (
@@ -161,11 +153,6 @@ export default function PaperSheet({
           <section className="paper-deaths">
             <h2 className="ribbon">Death Tally</h2>
             <div className="paper-tally">
-              <span className="tally-marks" aria-hidden="true">
-                {s.deaths
-                  ? Array.from({ length: Math.min(s.deaths, 15) }, () => '/').join(' ')
-                  : '—'}
-              </span>
               <Counter
                 label="deaths"
                 value={s.deaths}
@@ -273,9 +260,6 @@ export default function PaperSheet({
                 >
                   <Plus size={13} />
                 </button>
-                {s.skills[k].xp > 2 && (
-                  <small className="xp-overflow">{s.skills[k].xp} XP saved</small>
-                )}
               </div>
             ))}
           </div>

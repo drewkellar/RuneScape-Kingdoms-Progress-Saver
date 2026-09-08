@@ -1,4 +1,4 @@
-import { emptyCache, newState, previewOperation } from '../domain/model';
+import { emptyCache, newState, previewOperation, stateSchema } from '../domain/model';
 import type { Cache, Character, Operation, Pending, Card, State } from '../domain/model';
 import { readCache, writeCache } from './storage';
 import { rpc, supabase } from './client';
@@ -138,7 +138,7 @@ export class Engine {
     }
   }
   projected(character: Character): Character {
-    let c = structuredClone(character);
+    let c = { ...structuredClone(character), state: stateSchema.parse(character.state) };
     for (const p of this.cache.pending.filter((p) => p.characterId === c.id)) {
       if (p.error) break;
       try {

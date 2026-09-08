@@ -177,6 +177,11 @@
 }
 .cape-objectives input {
   appearance: none;
+  display: grid;
+  place-content: center;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
   background: #f6f0d4;
   border: 2px solid #c4b37c;
   clip-path: polygon(29% 0, 71% 0, 100% 29%, 100% 71%, 71% 100%, 29% 100%, 0 71%, 0 29%);
@@ -193,6 +198,8 @@
   display: block;
   color: white;
   font-size: 12px;
+  line-height: 1;
+  font-family: Arial, sans-serif;
   text-align: center;
 }
 .paper-quests {

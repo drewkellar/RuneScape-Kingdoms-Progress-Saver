@@ -63,7 +63,7 @@ Download a group backup after each session and keep a copy outside Supabase. Fre
 
 ## Game-content verification required
 
-This first release is marked **provisional**, not an authoritative rules engine. See `docs/GAME_CONTENT.md`. Automatic progression is off by default; it can be explicitly enabled after comparing the displayed rule to your released physical rules. Resource suggestions are configurable and are not presented as a verified complete token inventory. No card effects, starting equipment, or rewards have been invented. Your host enters card reference text as you play.
+The character sheet and three-XP level progression have been confirmed by the owner. Skills now always use two XP slots: the third award raises the level and clears both slots. Older manual-XP saves are converted without losing their earned progress. Existing Supabase installations must apply `004_confirmed_progression.sql`; fresh installations apply all migrations in order. See `docs/GAME_CONTENT.md` for remaining content boundaries. Resource suggestions are configurable and are not presented as a verified complete token inventory. No card effects, starting equipment, or rewards have been invented. Your host enters card reference text as you play.
 
 ## Architecture and next modules
 
@@ -75,4 +75,4 @@ This first release is marked **provisional**, not an authoritative rules engine.
 
 ### Release status
 
-Local implementation and automated checks are available. Live Discord/Supabase configuration, production two-account realtime/storage checks, released rulebook comparison, and a full group play session are required before calling this stable. No production deployment or real multi-person game session is claimed by the local test results.
+Local implementation and automated checks are available. Live Discord/Supabase configuration, production two-account realtime/storage checks, verification of remaining game content, and a full group play session are required before calling this stable. No production deployment or real multi-person game session is claimed by the local test results.

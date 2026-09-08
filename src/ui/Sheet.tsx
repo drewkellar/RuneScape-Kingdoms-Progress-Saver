@@ -117,13 +117,6 @@ export default function Sheet({ engine, character: c, run, edit, download }: Pro
           )}
         </div>
       </div>
-      {!s.autoLevel && (
-        <div className="notice compact">
-          <BookOpen size={17} />
-          <span>XP is tracked manually until you confirm your printed progression rules.</span>
-          {canEdit && <button onClick={() => edit('rules')}>Review rules</button>}
-        </div>
-      )}
       <PaperSheet character={c} engine={engine} run={run} edit={edit} />
       <div className="sheet-grid">
         <div className="sheet-main">

@@ -94,29 +94,37 @@ export default function Dialogs({ modal, engine, groupId, close, notify, go, sig
         : kind === 'create-group'
           ? 'Create your group'
           : 'Start a campaign';
+    const create = async () => {
+      if (kind === 'create-character')
+        go(`character/${await engine.createCharacter(groupId, name.trim())}`);
+      else if (kind === 'create-group') await engine.createGroup(name.trim());
+      else await engine.campaign(groupId, name.trim());
+    };
     content = (
-      <>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (!busy && name.trim()) submit(create);
+        }}
+      >
         <label>
           {kind === 'create-character' ? 'Character name' : 'Name'}
           <input autoFocus value={name} maxLength={80} onChange={(e) => setName(e.target.value)} />
         </label>
         {kind === 'create-character' && (
           <p className="muted">
-            Start with a blank sheet, then use the correction tool to enter your printed starting
-            levels and supplies.
+            Enter your printed starting levels and supplies with the correction tool after creation.
           </p>
         )}
-        {footer(
-          'Create',
-          async () => {
-            if (kind === 'create-character')
-              go(`character/${await engine.createCharacter(groupId, name.trim())}`);
-            else if (kind === 'create-group') await engine.createGroup(name.trim());
-            else await engine.campaign(groupId, name.trim());
-          },
-          !name.trim(),
-        )}
-      </>
+        <div className="modal-actions">
+          <button type="button" disabled={busy} onClick={close}>
+            Cancel
+          </button>
+          <button type="submit" className="primary" disabled={busy || !name.trim()}>
+            {busy ? 'Saving…' : 'Create'}
+          </button>
+        </div>
+      </form>
     );
   } else if (kind === 'correction') {
     title = 'Correct character values';
@@ -160,7 +168,7 @@ export default function Dialogs({ modal, engine, groupId, close, notify, go, sig
                 <input
                   type="number"
                   min={0}
-                  max={state.autoLevel ? 2 : 999999}
+                  max={2}
                   value={state.skills[k].xp}
                   onChange={(e) =>
                     setState({
@@ -197,55 +205,6 @@ export default function Dialogs({ modal, engine, groupId, close, notify, go, sig
         {footer('Save correction', async () => {
           await saveState('Corrected character values');
         })}
-      </>
-    );
-  } else if (kind === 'rules') {
-    title = 'Confirm your progression rules';
-    content = (
-      <>
-        <p>
-          The publisher’s tutorial describes <b>three XP per skill level</b>, with a maximum level
-          of <b>99</b>. We have not yet checked this against your released rulebook.
-        </p>
-        <p>
-          <a
-            href="https://steamforged.com/blogs/brands/skills-in-runescape-board-game"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Read the publisher’s skill tutorial ↗
-          </a>
-        </p>
-        <p className="muted">
-          With automation enabled, each three XP increases the skill level. At level 99, XP stays at
-          zero. Turning this on converts any accumulated XP immediately.
-        </p>
-        <label className="check">
-          <input
-            type="checkbox"
-            checked={confirmed}
-            onChange={(e) => setConfirmed(e.target.checked)}
-          />{' '}
-          I checked my printed rules and want this progression behavior.
-        </label>
-        {footer(
-          'Enable automatic leveling',
-          async () => {
-            const next = structuredClone(c!.state);
-            next.autoLevel = true;
-            for (const k of skills) {
-              const sk = next.skills[k];
-              sk.level = Math.min(99, sk.level + Math.floor(sk.xp / 3));
-              sk.xp = sk.level === 99 ? 0 : sk.xp % 3;
-            }
-            await engine.enqueue(
-              c!,
-              { kind: 'replace', state: next },
-              'Enabled confirmed automatic progression',
-            );
-          },
-          !confirmed,
-        )}
       </>
     );
   } else if (kind === 'resource') {

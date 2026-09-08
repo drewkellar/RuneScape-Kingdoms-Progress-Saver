@@ -6,9 +6,10 @@ test('local character survives refresh, undo, checkpoint restore, export and imp
   await page.getByRole('button', { name: 'Try on this device' }).click();
   await page.getByRole('button', { name: 'New character', exact: true }).first().click();
   await page.getByLabel('Character name', { exact: true }).fill('Aria');
-  await page.getByRole('button', { name: 'Create', exact: true }).click();
+  await page.getByLabel('Character name', { exact: true }).press('Enter');
   await expect(page.getByRole('heading', { name: 'Aria', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Add 2 Wood', exact: true }).click();
+  await page.getByRole('button', { name: 'Add 1 Wood', exact: true }).click();
+  await page.getByRole('button', { name: 'Add 1 Wood', exact: true }).click();
   await page.getByRole('button', { name: 'Add 1 Attack / Melee XP', exact: true }).click();
   await expect(page.getByText('Saved on this device', { exact: true })).toBeVisible();
   const characterUrl = page.url();
@@ -37,7 +38,7 @@ test('local character survives refresh, undo, checkpoint restore, export and imp
   await page.getByRole('button', { name: 'Import backup', exact: true }).click();
   await expect(page.getByRole('dialog')).not.toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
-  await expect(page.getByRole('button', { name: 'Add 2 Wood', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Add 1 Wood', exact: true })).toBeVisible();
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
   ).toBeTruthy();
@@ -73,7 +74,8 @@ test('production app reloads offline with cached character state', async ({ page
   await page.reload();
   await page.getByRole('button', { name: 'Try on this device' }).click();
   await expect(page.getByRole('heading', { name: 'Offline ranger', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Add 2 Wood', exact: true }).click();
+  await page.getByRole('button', { name: 'Add 1 Wood', exact: true }).click();
+  await page.getByRole('button', { name: 'Add 1 Wood', exact: true }).click();
   await expect(page.locator('.resource').filter({ hasText: 'Wood' }).locator('strong')).toHaveText(
     '2',
   );
@@ -117,4 +119,36 @@ test('cards, portrait ZIP export, and printed summary are usable', async ({ page
   await page.emulateMedia({ media: 'print' });
   await expect(page.locator('.print-summary')).toBeVisible();
   await expect(page.locator('.print-summary')).toContainText('Test reference effect');
+});
+
+test('confirmed XP rolls over and sheet controls match the requested behavior', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Try on this device' }).click();
+  await page.getByRole('button', { name: 'New character', exact: true }).first().click();
+  await page.getByLabel('Character name', { exact: true }).fill('XP ranger');
+  await page.getByLabel('Character name', { exact: true }).press('Enter');
+  await expect(page.getByRole('heading', { name: 'XP ranger', exact: true })).toBeVisible();
+  const award = page.getByRole('button', { name: 'Add 1 Attack / Melee XP', exact: true });
+  await award.click();
+  await expect(page.locator('.skill-attack .xp-slot.filled')).toHaveCount(1);
+  await award.click();
+  await expect(page.locator('.skill-attack .xp-slot.filled')).toHaveCount(2);
+  await award.click();
+  await expect(page.locator('.skill-attack .paper-level')).toHaveText('2');
+  await expect(page.locator('.skill-attack .xp-slot.filled')).toHaveCount(0);
+  await expect(page.locator('.quick-two')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Add 1 deaths', exact: true }).click();
+  await expect(page.locator('.paper-deaths .counter strong')).toHaveText('1');
+  await expect(page.locator('.tally-marks')).toHaveCount(0);
+  const checkbox = page.getByRole('checkbox', { name: 'Have 15 coins.', exact: true });
+  await checkbox.check();
+  await expect(checkbox).toBeChecked();
+  expect(await checkbox.evaluate((el) => getComputedStyle(el).padding)).toBe('0px');
+  await page.screenshot({ path: 'test-results/updated-sheet-controls.png', fullPage: true });
+  await page.reload();
+  await page.getByRole('button', { name: 'Try on this device' }).click();
+  await expect(page.locator('.skill-attack .paper-level')).toHaveText('2');
+  await expect(page.locator('.skill-attack .xp-slot.filled')).toHaveCount(0);
 });

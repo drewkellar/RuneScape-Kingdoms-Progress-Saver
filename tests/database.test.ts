@@ -34,6 +34,7 @@ beforeAll(async () => {
   );
   await db.exec(storageSql);
   await db.exec(await readFile('supabase/migrations/003_import.sql', 'utf8'));
+  await db.exec(await readFile('supabase/migrations/004_confirmed_progression.sql', 'utf8'));
   group = (await as<{ id: string }>(host, 'select create_group($1) id', ['Test table'])).rows[0].id;
   const token = (await as<{ token: string }>(host, 'select create_invite($1) token', [group]))
     .rows[0].token;
@@ -205,4 +206,34 @@ describe.sequential('Real PostgreSQL transactions and access control', () => {
       as(outsider, "insert into storage.objects(bucket_id,name) values('portraits',$1)", [path]),
     ).rejects.toThrow(/row-level security/);
   });
+});
+
+it('rolls third XP into a level on the server and normalizes old saves', async () => {
+  const id = crypto.randomUUID();
+  const state = newState('Legacy');
+  state.autoLevel = false;
+  state.skills.attack = { level: 4, xp: 8 };
+  await as(player, 'select create_character($1,$2,$3)', [id, group, state]);
+  const action = crypto.randomUUID();
+  await as(player, 'select apply_action($1,$2,0,$3,$4)', [
+    action,
+    id,
+    { kind: 'xp', key: 'attack', delta: 1 },
+    '+1 XP',
+  ]);
+  await as(player, 'select apply_action($1,$2,0,$3,$4)', [
+    action,
+    id,
+    { kind: 'xp', key: 'attack', delta: 1 },
+    '+1 XP',
+  ]);
+  const row = (
+    await as<{
+      state: { skills: { attack: { level: number; xp: number } }; autoLevel: boolean };
+      revision: number;
+    }>(player, 'select state,revision from characters where id=$1', [id])
+  ).rows[0];
+  expect(row.state.skills.attack).toEqual({ level: 7, xp: 0 });
+  expect(row.state.autoLevel).toBe(true);
+  expect(row.revision).toBe(1);
 });
