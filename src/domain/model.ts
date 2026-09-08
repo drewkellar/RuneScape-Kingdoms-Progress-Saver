@@ -10,15 +10,19 @@ export const skills = [
   'crafting',
   'cooking',
 ] as const;
+// Base resources confirmed from the owner's physical game; GP is tracked separately.
 export const resources = [
   'coins',
   'wood',
   'ore',
-  'hide',
-  'flax',
-  'herbs',
-  'rawFish',
-  'food',
+  'bars',
+  'leather',
+  'thread',
+  'fish',
+  'egg',
+  'leaves',
+  'grain',
+  'cherries',
 ] as const;
 export const labels: Record<string, string> = {
   attack: 'Attack / Melee',
@@ -32,6 +36,14 @@ export const labels: Record<string, string> = {
   coins: 'Gold pieces',
   wood: 'Wood',
   ore: 'Ore',
+  bars: 'Bars',
+  leather: 'Leather',
+  thread: 'Thread',
+  fish: 'Fish',
+  egg: 'Egg',
+  leaves: 'Leaves',
+  grain: 'Grain',
+  cherries: 'Cherries',
   hide: 'Hide',
   flax: 'Flax',
   herbs: 'Herbs',
@@ -64,6 +76,7 @@ export const stateSchema = z
       .strict(),
     resources: z
       .record(z.string().regex(/^[a-zA-Z][a-zA-Z0-9]{0,39}$/), count)
+      .transform((saved) => ({ ...Object.fromEntries(resources.map((key) => [key, 0])), ...saved }))
       .refine((r) => Object.keys(r).length <= 50),
     wounds: count,
     deaths: count,

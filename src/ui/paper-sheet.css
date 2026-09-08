@@ -496,50 +496,51 @@
 .paper-reference {
   min-width: 0;
 }
-@media (min-width: 1450px) {
-  .paper-skill-list {
-    gap: 17px;
-  }
-  .paper-skill {
-    min-height: 73px;
-  }
-  .paper-records {
-    grid-template-rows: 151px 130px auto 1fr auto;
-  }
-}
-@media (max-width: 1350px) and (min-width: 761px) {
+/* Fit the complete printed layout to desktop windows without rearranging its columns. */
+@media (min-width: 761px) {
   .physical-frame {
+    width: 1300px;
+    max-width: none;
+    box-sizing: border-box;
     padding: 12px;
+    margin: 12px 0 20px;
   }
   .parchment-sheet {
-    padding: 20px 16px;
-    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-    gap: 15px;
+    padding: 18px;
+    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr) minmax(0, 0.72fr);
   }
-  .paper-reference {
-    grid-column: 1/3;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px 24px;
-    border-top: 1px solid #b9a77b;
-    padding-top: 18px;
+  .paper-records {
+    grid-template-rows: 116px 90px auto 1fr;
+    gap: 10px;
   }
-  .paper-reference .ribbon {
-    grid-column: 1/3;
+  .paper-portrait .portrait.large {
+    width: 58px;
+    height: 58px;
   }
-  .paper-reference > .ribbon:not(:first-child) {
-    margin-top: 7px;
+  .paper-tally {
+    min-height: 50px;
   }
-  .paper-wordmark {
-    display: none;
+  .parchment-sheet .ribbon {
+    margin-bottom: 9px;
+    font-size: 14px;
   }
-  .paper-reference .reference-checks {
-    grid-column: 1/3;
-    display: flex;
-    gap: 22px;
+  .paper-resource.resource {
+    padding: 3px 0;
   }
-  .paper-reference p {
-    margin-bottom: 8px;
+  .paper-resource .counter button {
+    width: 24px;
+    height: 24px;
+    min-height: 24px;
+    padding: 2px;
+  }
+  .cape-objectives label {
+    margin: 7px 0;
+  }
+  .paper-skill-list {
+    gap: 9px;
+  }
+  .paper-skill {
+    min-height: 64px;
   }
 }
 @media (max-width: 760px) {
@@ -645,4 +646,33 @@
 }
 .paper-resource > span {
   overflow-wrap: anywhere;
+}
+
+/* GP belongs to the side-quest column, independent of resource-list height. */
+.paper-quests .paper-gp {
+  margin-top: 18px;
+}
+.paper-award {
+  position: static;
+  flex: 0 0 26px;
+  width: 26px;
+  min-height: 26px;
+  height: 26px;
+  padding: 0;
+}
+.paper-level {
+  flex: 0 1 42px;
+}
+.paper-xp {
+  flex-shrink: 0;
+}
+.custom-game-icon {
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+@media (max-width: 760px) {
+  .sheet-fit-toggle {
+    display: none;
+  }
 }

@@ -8,6 +8,7 @@ export class Engine {
   cache: Cache = emptyCache();
   error = '';
   syncing = false;
+  saving = 0;
   peers: { name: string; pending: number }[] = [];
   private chain = Promise.resolve();
   private listeners = new Set<() => void>();
@@ -64,6 +65,8 @@ export class Engine {
     if (this.channel) void supabase?.removeChannel(this.channel);
   }
   private async commit(fn: () => void) {
+    this.saving++;
+    this.emit();
     const task = this.chain.then(async () => {
       const before = structuredClone(this.cache);
       try {
@@ -77,7 +80,12 @@ export class Engine {
       this.track();
     });
     this.chain = task.catch(() => {});
-    return task;
+    try {
+      return await task;
+    } finally {
+      this.saving--;
+      this.emit();
+    }
   }
   private track() {
     void this.channel?.track({ name: this.displayName, pending: this.cache.pending.length });

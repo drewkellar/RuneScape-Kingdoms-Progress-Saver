@@ -1,5 +1,5 @@
 import { Plus, ImagePlus } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { skills, labels } from '../domain/model';
 import type { Character, State } from '../domain/model';
 import type { Engine } from '../data/engine';
@@ -26,16 +26,52 @@ const benefits = [
 ] as const;
 
 export default function PaperSheet({
+  fit,
   character: c,
   engine,
   run,
   edit,
 }: {
+  fit: boolean;
   character: Character;
   engine: Engine;
   run: (fn: () => Promise<unknown>) => void;
   edit: (kind: string) => void;
 }) {
+  const frameRef = useRef<HTMLElement>(null);
+  const [sheetScale, setSheetScale] = useState(1);
+  useEffect(() => {
+    const frame = frameRef.current;
+    if (!frame) return;
+    const resize = () => {
+      if (!fit || window.innerWidth <= 760) {
+        setSheetScale(1);
+        return;
+      }
+      const parent = frame.parentElement!;
+      const style = getComputedStyle(parent);
+      const width =
+        parent.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const top =
+        (frame.previousElementSibling?.getBoundingClientRect().bottom ?? 170) + window.scrollY + 20;
+      setSheetScale(
+        Math.min(
+          1,
+          width / 1300,
+          Math.max(320, window.innerHeight - top - 20) / frame.offsetHeight,
+        ),
+      );
+    };
+    const observer = new ResizeObserver(resize);
+    observer.observe(frame);
+    observer.observe(frame.parentElement!);
+    window.addEventListener('resize', resize);
+    resize();
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', resize);
+    };
+  }, [fit]);
   const s = c.state,
     editable = engine.canEdit(c);
   const [pendingObjectives, setPendingObjectives] = useState<Record<string, boolean>>({});
@@ -94,6 +130,8 @@ export default function PaperSheet({
   );
   return (
     <section
+      ref={frameRef}
+      style={{ zoom: sheetScale }}
       className="physical-frame"
       aria-label="Character sheet matching the printed game sheet"
     >
@@ -199,6 +237,10 @@ export default function PaperSheet({
                 </div>
               ))}
             </div>
+            <section className="paper-gp">
+              <h2 className="ribbon">GP</h2>
+              {supply('coins', s.resources.coins || 0)}
+            </section>
           </section>
           <section className="paper-supplies">
             <h2 className="ribbon">Resources</h2>
@@ -212,10 +254,6 @@ export default function PaperSheet({
                 <Plus size={13} /> Add resource
               </button>
             )}
-          </section>
-          <section className="paper-gp">
-            <h2 className="ribbon">GP</h2>
-            {supply('coins', s.resources.coins || 0)}
           </section>
         </div>
         <section className="paper-skills">

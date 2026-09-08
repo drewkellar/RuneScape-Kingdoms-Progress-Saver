@@ -152,3 +152,37 @@ test('confirmed XP rolls over and sheet controls match the requested behavior', 
   await expect(page.locator('.skill-attack .paper-level')).toHaveText('2');
   await expect(page.locator('.skill-attack .xp-slot.filled')).toHaveCount(0);
 });
+
+test('default resources and complete desktop sheet keep GP and XP controls in place', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Try on this device' }).click();
+  await page.getByRole('button', { name: 'New character', exact: true }).first().click();
+  await page.getByLabel('Character name', { exact: true }).fill('Compact sheet');
+  await page.getByLabel('Character name', { exact: true }).press('Enter');
+  await expect(page.locator('.paper-supplies .paper-resource')).toHaveCount(10);
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 1280, height: 720 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await expect
+      .poll(async () => {
+        const box = await page.locator('.physical-frame').boundingBox();
+        return (
+          !!box && box.x + box.width <= viewport.width && box.y + box.height <= viewport.height
+        );
+      })
+      .toBeTruthy();
+    const gp = (await page.locator('.paper-gp').boundingBox())!;
+    const benefits = (await page.locator('.quest-benefits').boundingBox())!;
+    expect(gp.y - benefits.y - benefits.height).toBeLessThan(30);
+    const slots = (await page.locator('.skill-attack .paper-xp').boundingBox())!;
+    const plus = (await page.locator('.skill-attack .paper-award').boundingBox())!;
+    expect(plus.x).toBeGreaterThanOrEqual(slots.x + slots.width);
+    expect(Math.abs(plus.y + plus.height / 2 - slots.y - slots.height / 2)).toBeLessThan(2);
+  }
+  await page.screenshot({ path: 'test-results/compact-sheet.png', fullPage: false });
+});

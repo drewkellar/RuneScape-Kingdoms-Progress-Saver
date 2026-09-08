@@ -3,6 +3,14 @@ import { applyOperation, newState, stateSchema } from '../src/domain/model';
 import { backupSchema, makeBackup } from '../src/data/backup';
 import { emptyCache } from '../src/domain/model';
 describe('Character rules and backups', () => {
+  it('fills missing standard resources without changing saved or custom quantities', () => {
+    const state = newState('Aria');
+    expect(Object.keys(state.resources)).toHaveLength(11);
+    expect(state.resources).not.toHaveProperty('flax');
+    const restored = stateSchema.parse({ ...state, resources: { wood: 7, flax: 3, crystal: 9 } });
+    expect(restored.resources).toMatchObject({ wood: 7, ore: 0, cherries: 0, flax: 3, crystal: 9 });
+    expect(stateSchema.parse(restored)).toEqual(restored);
+  });
   it('awards resources without counting token faces', () => {
     const s = applyOperation(newState('Aria'), { kind: 'resource', key: 'wood', delta: 2 });
     expect(s.resources.wood).toBe(2);

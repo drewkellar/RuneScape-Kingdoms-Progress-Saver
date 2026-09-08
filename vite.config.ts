@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => {
           icons: [{ src: 'crest.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' }],
         },
         workbox: {
-          globPatterns: ['**/*.{js,css,html,svg,woff2}'],
+          globPatterns: ['**/*.{js,css,html,svg,png,jpg,jpeg,webp,woff2}'],
           navigateFallback: 'index.html',
           cleanupOutdatedCaches: true,
         },

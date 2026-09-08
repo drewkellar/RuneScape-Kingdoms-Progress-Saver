@@ -75,6 +75,7 @@ type Props = {
   download: () => void;
 };
 export default function Sheet({ engine, character: c, run, edit, download }: Props) {
+  const [fitSheet, setFitSheet] = useState(true);
   const [tab, setTab] = useState('inventory');
   const [search, setSearch] = useState('');
   const s = c.state;
@@ -100,6 +101,13 @@ export default function Sheet({ engine, character: c, run, edit, download }: Pro
           {owner} · Total level <b>{total}</b>
         </p>
         <div className="heading-actions">
+          <button
+            className="sheet-fit-toggle"
+            onClick={() => setFitSheet(!fitSheet)}
+            aria-pressed={fitSheet}
+          >
+            {fitSheet ? 'Actual size' : 'Fit to window'}
+          </button>
           <button onClick={download}>
             <Download size={16} /> Download
           </button>
@@ -117,7 +125,7 @@ export default function Sheet({ engine, character: c, run, edit, download }: Pro
           )}
         </div>
       </div>
-      <PaperSheet character={c} engine={engine} run={run} edit={edit} />
+      <PaperSheet fit={fitSheet} character={c} engine={engine} run={run} edit={edit} />
       <div className="sheet-grid">
         <div className="sheet-main">
           <section className="panel inventory-panel">

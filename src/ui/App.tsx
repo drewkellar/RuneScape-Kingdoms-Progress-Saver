@@ -290,21 +290,23 @@ export default function App() {
           </div>
           <div className={`sync-status ${engine.error ? 'warning' : ''}`} role="status">
             {pending || !online || engine.error ? <CloudOff size={16} /> : <Check size={16} />}{' '}
-            {engine.local
-              ? pending
-                ? 'Saving locally…'
-                : 'Saved on this device'
-              : engine.error
-                ? 'Connection needs attention'
-                : !online
-                  ? pending
-                    ? 'Offline—changes pending'
-                    : 'Offline—cached copy'
-                  : pending
-                    ? engine.syncing
-                      ? 'Syncing…'
-                      : `${pending} changes pending`
-                    : 'Saved'}
+            {engine.saving
+              ? 'Saving locally�'
+              : engine.local
+                ? pending
+                  ? 'Saving locally…'
+                  : 'Saved on this device'
+                : engine.error
+                  ? 'Connection needs attention'
+                  : !online
+                    ? pending
+                      ? 'Offline—changes pending'
+                      : 'Offline—cached copy'
+                    : pending
+                      ? engine.syncing
+                        ? 'Syncing…'
+                        : `${pending} changes pending`
+                      : 'Saved'}
             {!engine.local && (
               <button
                 className="icon-button"
