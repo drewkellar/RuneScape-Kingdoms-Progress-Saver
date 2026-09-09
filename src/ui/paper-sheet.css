@@ -731,8 +731,7 @@
 .physical-frame.image-parchment {
   background: url('../assets/backgrounds/character-parchment.png') center / 100% 100% no-repeat;
   border: 0;
-  --sheet-extra-inset: clamp(0px, calc(10vw - 120px), 70px);
-  padding: calc(8% + var(--sheet-extra-inset)) calc(7% + var(--sheet-extra-inset));
+  padding: 8% 7%;
   box-shadow: 0 8px 28px #0006;
 }
 .image-parchment .parchment-sheet {
