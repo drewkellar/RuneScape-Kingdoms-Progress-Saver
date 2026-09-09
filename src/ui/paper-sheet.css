@@ -749,3 +749,10 @@
   color: #24170b;
   font-weight: 700;
 }
+
+.complete-skill-badge > img {
+  display: block;
+  width: 100%;
+  height: 68px;
+  object-fit: contain;
+}

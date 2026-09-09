@@ -6,6 +6,7 @@ import type { Engine } from '../data/engine';
 import { Portrait } from './Sheet';
 import { Counter } from './components';
 import Icon from './Icon';
+import SkillBadge from './SkillBadge';
 import './paper-sheet.css';
 
 const objectives = [
@@ -225,12 +226,7 @@ export default function PaperSheet({
           <div className="paper-skill-list">
             {skills.map((k) => (
               <div key={k} className={`paper-skill skill-${k}`}>
-                <div className="skill-seal">
-                  <span>
-                    <Icon name={k} size={29} />
-                  </span>
-                  <b>{k === 'attack' ? 'Melee' : labels[k]}</b>
-                </div>
+                <SkillBadge skill={k} />
                 <button
                   className="paper-level"
                   aria-label={`Correct ${labels[k]} level, currently ${s.skills[k].level}`}
