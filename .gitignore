@@ -7,3 +7,7 @@ test-results/
 playwright-report/
 *.tsbuildinfo
 .npm-cache/
+.nav/
+
+# Keep original artwork local
+/assets-originals/

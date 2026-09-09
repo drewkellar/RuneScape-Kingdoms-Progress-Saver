@@ -163,8 +163,15 @@ test('default resources and original-size sheet keep GP and XP controls in place
   await page.getByLabel('Character name', { exact: true }).fill('Compact sheet');
   await page.getByLabel('Character name', { exact: true }).press('Enter');
   await expect(page.locator('.paper-supplies .paper-resource')).toHaveCount(10);
-  await expect(page.locator('.skill-attack .complete-skill-badge img')).toHaveAttribute('alt', 'Melee');
-  await expect(page.locator('.skill-magic .skill-seal > b')).toHaveText('Magic');
+  await expect(page.locator('.skill-attack .complete-skill-badge img')).toHaveAttribute(
+    'alt',
+    'Melee',
+  );
+  await expect(page.locator('.skill-magic .complete-skill-badge img')).toHaveAttribute(
+    'alt',
+    'Magic',
+  );
+  await expect(page.locator('.complete-skill-badge img')).toHaveCount(8);
   for (const selector of ['.skill-attack', '.skill-thieving', '.paper-supplies .paper-resource']) {
     const icon = page.locator(selector).first().locator('img');
     await expect(icon).toBeVisible();
