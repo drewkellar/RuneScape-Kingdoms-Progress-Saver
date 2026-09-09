@@ -75,6 +75,15 @@ type Props = {
   download: () => void;
 };
 export default function Sheet({ engine, character: c, run, edit, download }: Props) {
+  const [background, setBackground] = useState<'image' | 'generated'>(() => {
+    try {
+      return localStorage.getItem('kingdoms-sheet-background') === 'generated'
+        ? 'generated'
+        : 'image';
+    } catch {
+      return 'image';
+    }
+  });
   const [tab, setTab] = useState('inventory');
   const [search, setSearch] = useState('');
   const s = c.state;
@@ -100,6 +109,22 @@ export default function Sheet({ engine, character: c, run, edit, download }: Pro
           {owner} · Total level <b>{total}</b>
         </p>
         <div className="heading-actions">
+          <select
+            aria-label="Sheet background"
+            value={background}
+            onChange={(event) => {
+              const next = event.target.value as 'image' | 'generated';
+              setBackground(next);
+              try {
+                localStorage.setItem('kingdoms-sheet-background', next);
+              } catch {
+                /* Keep the setting for this visit if storage is unavailable. */
+              }
+            }}
+          >
+            <option value="image">Image parchment</option>
+            <option value="generated">Generated parchment</option>
+          </select>
           <button onClick={download}>
             <Download size={16} /> Download
           </button>
@@ -117,7 +142,7 @@ export default function Sheet({ engine, character: c, run, edit, download }: Pro
           )}
         </div>
       </div>
-      <PaperSheet character={c} engine={engine} run={run} edit={edit} />
+      <PaperSheet background={background} character={c} engine={engine} run={run} edit={edit} />
       <div className="sheet-grid">
         <div className="sheet-main">
           <section className="panel inventory-panel">

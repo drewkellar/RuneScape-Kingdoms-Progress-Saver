@@ -726,3 +726,21 @@
     grid-row: 5;
   }
 }
+
+/* The supplied artwork includes both the parchment and its wooden frame. */
+.physical-frame.image-parchment {
+  background: url('../assets/backgrounds/character-parchment.png') center / 100% 100% no-repeat;
+  border: 0;
+  padding: 6% 5%;
+  box-shadow: 0 8px 28px #0006;
+}
+.image-parchment .parchment-sheet {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+}
+.sheet-toolbar .heading-actions select {
+  width: auto;
+  margin: 0;
+}

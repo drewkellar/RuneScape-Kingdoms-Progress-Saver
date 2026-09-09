@@ -193,3 +193,20 @@ test('default resources and original-size sheet keep GP and XP controls in place
   }
   await page.screenshot({ path: 'test-results/original-sheet.png', fullPage: true });
 });
+
+test('parchment choice persists without changing character progress', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Try on this device' }).click();
+  await page.getByRole('button', { name: 'New character', exact: true }).first().click();
+  await page.getByLabel('Character name', { exact: true }).fill('Parchment test');
+  await page.getByLabel('Character name', { exact: true }).press('Enter');
+  await expect(page.locator('.physical-frame')).toHaveClass(/image-parchment/);
+  await page.getByLabel('Sheet background').selectOption('generated');
+  await expect(page.locator('.physical-frame')).not.toHaveClass(/image-parchment/);
+  await page.reload();
+  await page.getByRole('button', { name: 'Try on this device' }).click();
+  await expect(page.getByLabel('Sheet background')).toHaveValue('generated');
+  await page.getByLabel('Sheet background').selectOption('image');
+  await expect(page.locator('.physical-frame')).toHaveClass(/image-parchment/);
+  await expect(page.getByRole('heading', { name: 'Parchment test', exact: true })).toBeVisible();
+});

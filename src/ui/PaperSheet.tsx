@@ -26,11 +26,13 @@ const benefits = [
 ] as const;
 
 export default function PaperSheet({
+  background,
   character: c,
   engine,
   run,
   edit,
 }: {
+  background: 'image' | 'generated';
   character: Character;
   engine: Engine;
   run: (fn: () => Promise<unknown>) => void;
@@ -94,7 +96,7 @@ export default function PaperSheet({
   );
   return (
     <section
-      className="physical-frame"
+      className={`physical-frame ${background === 'image' ? 'image-parchment' : ''}`}
       aria-label="Character sheet matching the printed game sheet"
     >
       <div className="parchment-sheet">

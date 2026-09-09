@@ -19,6 +19,7 @@ export default defineConfig(({ mode }) => {
           icons: [{ src: 'crest.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' }],
         },
         workbox: {
+          maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
           globPatterns: ['**/*.{js,css,html,svg,png,jpg,jpeg,webp,woff2}'],
           navigateFallback: 'index.html',
           cleanupOutdatedCaches: true,
