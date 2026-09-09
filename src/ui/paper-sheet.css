@@ -731,7 +731,8 @@
 .physical-frame.image-parchment {
   background: url('../assets/backgrounds/character-parchment.png') center / 100% 100% no-repeat;
   border: 0;
-  padding: 8% 7%;
+  --sheet-extra-inset: clamp(0px, calc(10vw - 120px), 70px);
+  padding: calc(8% + var(--sheet-extra-inset)) calc(7% + var(--sheet-extra-inset));
   box-shadow: 0 8px 28px #0006;
 }
 .image-parchment .parchment-sheet {
@@ -743,4 +744,9 @@
 .sheet-toolbar .heading-actions select {
   width: auto;
   margin: 0;
+}
+
+.paper-resources .paper-resource > span {
+  color: #24170b;
+  font-weight: 700;
 }
