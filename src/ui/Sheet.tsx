@@ -18,6 +18,7 @@ import { getPortrait } from '../data/storage';
 import { supabase } from '../data/client';
 import Icon from './Icon';
 import PaperSheet from './PaperSheet';
+import MobileSheet from './MobileSheet';
 import { Counter, Empty, TextEditor } from './components';
 export function Portrait({
   character,
@@ -142,7 +143,19 @@ export default function Sheet({ engine, character: c, run, edit, download }: Pro
           )}
         </div>
       </div>
-      <PaperSheet background={background} character={c} engine={engine} run={run} edit={edit} />
+      <MobileSheet
+        status={
+          engine.error
+            ? 'Save needs attention'
+            : engine.saving || engine.cache.pending.length
+              ? 'Changes pending'
+              : engine.local
+                ? 'Saved on device'
+                : 'Saved'
+        }
+      >
+        <PaperSheet background={background} character={c} engine={engine} run={run} edit={edit} />
+      </MobileSheet>
       <div className="sheet-grid">
         <div className="sheet-main">
           <section className="panel inventory-panel">

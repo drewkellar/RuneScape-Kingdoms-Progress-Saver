@@ -76,3 +76,8 @@ The character sheet and three-XP level progression have been confirmed by the ow
 ### Release status
 
 Local implementation and automated checks are available. Live Discord/Supabase configuration, production two-account realtime/storage checks, verification of remaining game content, and a full group play session are required before calling this stable. No production deployment or real multi-person game session is claimed by the local test results.
+
+
+### Phone layouts
+
+Portrait phones use a solid parchment-colored sheet with larger touch controls; this does not change the saved desktop background preference. Rotating a phone to landscape opens the desktop-style sheet in a full-window viewer. Use +/-, the zoom slider, or native browser pinch zoom to enlarge it, and scroll to reach other fields. Fit resets the viewer. Back to app returns to inventory, notes, history, and navigation. Rotating back restores portrait mode without resetting character progress. Browser navigation bars may remain visible; the viewer does not request browser fullscreen permissions.

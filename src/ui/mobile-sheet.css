@@ -1,0 +1,205 @@
+/* Portrait prioritizes readable, touchable controls over the printed arrangement. */
+@media (max-width: 760px) and (orientation: portrait) {
+  .mobile-sheet .physical-frame {
+    background: #eee2bf;
+    padding: 16px;
+    border: 1px solid #ac9568;
+    border-radius: 8px;
+    box-shadow: none;
+  }
+  .mobile-sheet .parchment-sheet {
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+  }
+  .mobile-sheet .paper-records {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto;
+    gap: 18px 12px;
+  }
+  .mobile-sheet .paper-name {
+    grid-column: 1 / -1;
+  }
+  .mobile-sheet .paper-capes,
+  .mobile-sheet .paper-quests,
+  .mobile-sheet .paper-supplies {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+  .mobile-sheet .paper-supplies {
+    min-height: 0;
+  }
+  .mobile-sheet .paper-resources {
+    grid-template-columns: minmax(0, 1fr);
+    background: none;
+  }
+  .mobile-sheet .paper-resource {
+    gap: 8px;
+    padding: 5px 0;
+  }
+  .mobile-sheet .paper-resource > span {
+    font-size: 14px;
+    white-space: normal;
+  }
+  .mobile-sheet .paper-resource > :is(svg, img) {
+    width: 24px;
+    height: 24px;
+  }
+  .mobile-sheet .counter {
+    gap: 5px;
+  }
+  .mobile-sheet .counter button {
+    width: 40px;
+    height: 44px;
+    min-height: 44px;
+  }
+  .mobile-sheet .counter strong {
+    font-size: 18px;
+  }
+  .mobile-sheet .paper-award {
+    flex-basis: 44px;
+    width: 44px;
+    height: 44px;
+  }
+  .mobile-sheet .paper-xp .xp-slot {
+    width: 48px;
+    height: 52px;
+  }
+  .mobile-sheet .cape-objectives input {
+    width: 24px;
+    height: 24px;
+  }
+  .mobile-sheet .cape-objectives label {
+    min-height: 36px;
+    align-items: center;
+    font-size: 14px;
+  }
+  .mobile-sheet .quest-benefits p {
+    font-size: 14px;
+  }
+  .mobile-sheet .paper-tally {
+    min-height: 55px;
+  }
+  .sheet-toolbar .heading-actions {
+    flex-wrap: wrap;
+  }
+  .sheet-toolbar select[aria-label='Sheet background'] {
+    display: none;
+  }
+}
+/* A fixed, scrollable canvas keeps landscape layout independent of phone width. */
+.landscape-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: #11181f;
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
+.landscape-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  flex: 0 0 auto;
+}
+.landscape-controls button {
+  min-height: 40px;
+  white-space: nowrap;
+}
+.landscape-controls input {
+  width: 110px;
+  min-width: 60px;
+  margin: 0;
+  padding: 0;
+}
+.landscape-controls span {
+  margin-left: auto;
+  font-size: 12px;
+}
+.landscape-sheet .sheet-viewport {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-x pan-y pinch-zoom;
+}
+.landscape-sheet .sheet-canvas {
+  width: 1300px;
+  margin-inline: auto;
+}
+.landscape-sheet .physical-frame {
+  width: 1300px;
+  margin: 0;
+  padding: 22px;
+  border-width: 7px;
+}
+.landscape-sheet .physical-frame.image-parchment {
+  padding: 104px 91px;
+  border: 0;
+}
+.landscape-sheet .parchment-sheet {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 0.64fr);
+  gap: 14px;
+  padding: 26px 23px 30px;
+}
+.landscape-sheet .image-parchment .parchment-sheet {
+  padding: 0;
+}
+.landscape-sheet .paper-records {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: 145px 122px auto 1fr auto;
+  gap: 14px;
+}
+.landscape-sheet .paper-supplies {
+  grid-column: 1;
+  grid-row: 4;
+}
+.landscape-sheet .paper-quests {
+  grid-column: 2;
+  grid-row: 3 / 5;
+}
+.landscape-sheet .paper-reference {
+  display: block;
+  grid-column: auto;
+  border: 0;
+  padding: 0;
+}
+.landscape-sheet .paper-reference .reference-checks {
+  display: block;
+}
+.landscape-sheet .paper-wordmark {
+  display: block;
+}
+.landscape-sheet .parchment-sheet .ribbon {
+  font-size: 15px;
+  padding: 4px 9px;
+}
+.landscape-sheet .paper-reference p,
+.landscape-sheet .paper-reference li {
+  font-size: 12px;
+}
+.landscape-sheet .paper-reference > .ribbon:not(:first-child) {
+  margin-top: 23px;
+}
+.landscape-sheet .paper-xp .xp-slot {
+  width: 53px;
+  height: 59px;
+}
+.landscape-sheet .paper-skill {
+  min-height: 68px;
+}
+.landscape-sheet .paper-skill-list {
+  gap: 13px;
+}
+@media print {
+  .landscape-controls {
+    display: none;
+  }
+  .landscape-sheet {
+    position: static;
+  }
+}

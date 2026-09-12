@@ -219,3 +219,59 @@ test('parchment choice persists without changing character progress', async ({ p
   await expect(page.locator('.physical-frame')).toHaveClass(/image-parchment/);
   await expect(page.getByRole('heading', { name: 'Parchment test', exact: true })).toBeVisible();
 });
+
+test('phone portrait and landscape preserve progress with a zoomable desktop sheet', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Try on this device' }).click();
+  await page.getByRole('button', { name: 'New character', exact: true }).first().click();
+  await page.getByLabel('Character name', { exact: true }).fill('Mobile adventurer');
+  await page.getByLabel('Character name', { exact: true }).press('Enter');
+  const frame = page.locator('.physical-frame');
+  expect(await frame.evaluate((el) => getComputedStyle(el).backgroundImage)).toBe('none');
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+  ).toBeTruthy();
+  await page.getByRole('button', { name: 'Add 1 Wood', exact: true }).click();
+  await expect(page.getByText('Saved on this device', { exact: true })).toBeVisible();
+  await page.screenshot({ path: 'test-results/mobile-portrait.png', fullPage: true });
+  await page.setViewportSize({ width: 320, height: 568 });
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+  ).toBeTruthy();
+  await page.setViewportSize({ width: 844, height: 390 });
+  await expect(page.getByRole('button', { name: 'Back to app', exact: true })).toBeVisible();
+  await expect
+    .poll(async () => {
+      const sheet = (await frame.boundingBox())!;
+      const area = (await page.locator('.sheet-viewport').boundingBox())!;
+      return sheet.width <= area.width + 2 && sheet.height <= area.height + 2;
+    })
+    .toBeTruthy();
+  const skills = (await page.locator('.paper-skills').boundingBox())!;
+  const reference = (await page.locator('.paper-reference').boundingBox())!;
+  expect(reference.x).toBeGreaterThan(skills.x);
+  await page.screenshot({ path: 'test-results/mobile-landscape.png' });
+  const initialWidth = (await frame.boundingBox())!.width;
+  await page.getByRole('button', { name: 'Zoom in sheet', exact: true }).click();
+  expect((await frame.boundingBox())!.width).toBeGreaterThan(initialWidth);
+  await page.getByRole('button', { name: 'Add 1 Wood', exact: true }).click();
+  await expect(
+    page.locator('.paper-resource').filter({ hasText: 'Wood' }).locator('strong'),
+  ).toHaveText('2');
+  await page.getByLabel('Sheet zoom', { exact: true }).fill('4');
+  expect(
+    await page.locator('.sheet-viewport').evaluate((el) => el.scrollWidth > el.clientWidth),
+  ).toBeTruthy();
+  await page.getByRole('button', { name: 'Fit', exact: true }).click();
+  await page.getByRole('button', { name: 'Back to app', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Open landscape sheet' })).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.locator('.landscape-sheet')).toHaveCount(0);
+  expect(await frame.evaluate((el) => getComputedStyle(el).backgroundImage)).toBe('none');
+  await expect(
+    page.locator('.paper-resource').filter({ hasText: 'Wood' }).locator('strong'),
+  ).toHaveText('2');
+});
