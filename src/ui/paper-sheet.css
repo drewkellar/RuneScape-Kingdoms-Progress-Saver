@@ -756,3 +756,28 @@
   height: 68px;
   object-fit: contain;
 }
+
+/* Larger desktop badges; phone portrait and landscape retain their touch layouts. */
+@media (min-width: 1101px) {
+  .skill-seal {
+    width: 76px;
+  }
+  .complete-skill-badge > img {
+    height: 96px;
+  }
+  .skill-seal > span {
+    width: 68px;
+    height: 68px;
+  }
+  .skill-seal > span > :is(svg, img) {
+    width: 40px;
+    height: 40px;
+  }
+  .skill-seal > b {
+    font-size: 10px;
+    padding: 4px 0;
+  }
+  .paper-skill {
+    min-height: 96px;
+  }
+}
