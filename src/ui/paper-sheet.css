@@ -781,3 +781,10 @@
     min-height: 96px;
   }
 }
+
+.parchment-sheet .name-line h1,
+.parchment-sheet .name-line .paper-edit,
+.parchment-sheet .paper-supplies > .paper-edit {
+  font-weight: 700;
+  color: #24170b;
+}
