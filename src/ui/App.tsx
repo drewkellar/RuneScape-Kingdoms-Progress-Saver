@@ -146,9 +146,9 @@ export default function App() {
         )}
         <button
           className="primary"
-          disabled={!supabase}
           onClick={() =>
             run(async () => {
+              if (!supabase) throw Error('Cloud sign-in is unavailable. Please contact the host.');
               const invitation = location.hash.startsWith('#invite/')
                 ? location.hash.slice(8)
                 : null;
