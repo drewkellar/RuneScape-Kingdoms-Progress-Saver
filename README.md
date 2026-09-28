@@ -1,6 +1,6 @@
 # Kingdoms Character Companion
 
-A desktop-first, unofficial RuneScape Kingdoms: Shadow of Elvarg character companion. React + TypeScript + Vite, Supabase, and GitHub Pages. No paid services or scheduled keep-alive jobs.
+A desktop-first, unofficial RuneScape Kingdoms: Shadow of Elvarg character companion. React + TypeScript + Vite, Supabase, and GitHub Pages. Includes a scheduled database activity check; no paid services are required.
 
 ## Run locally
 
@@ -40,7 +40,7 @@ The repository is [drewkellar/RuneScape-Kingdoms-Progress-Saver](https://github.
 2. In repository Settings → Pages, select **GitHub Actions** as the source.
 3. Set repository Actions variables `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, and optionally `VITE_BASE_PATH`. The workflow defaults the path to `/REPOSITORY/`; use `/` for a custom domain or user Pages repository.
 4. Push to `main` or run **Validate and deploy Pages**. It runs unit/database tests, builds, and deploys. Pull requests validate without deploying.
-5. Verify Discord login at the production URL. Without Supabase variables the build remains a functional, clearly labeled local-only app.
+5. Verify Discord login at the production URL. The client uses this project's public connection settings as a fallback when Supabase variables are absent.
 
 Character routes use `#character/UUID`, so direct links and refreshes work on Pages without server rewrite rules. Production updates activate when existing tabs close; the app avoids forcing a refresh during unsaved typing.
 
@@ -56,6 +56,12 @@ Character routes use `#character/UUID`, so direct links and refreshes work on Pa
 - Imports validate structure/version, preview their contents, and copy card IDs to avoid cross-group collisions. New references require a host. Character/card import is transactional; portrait uploads happen afterward and failures are reported separately. Portable backups preserve current state, not the entire historical action/checkpoint database. Restore and import never restore accounts or permissions from a file.
 
 ## When Supabase pauses
+
+The **Supabase database activity check** workflow makes one database read at 02:17, 10:17, and 18:17 UTC daily. It reads only a public singleton health row; it does not access player data, write history, or generate character Realtime updates. Existing installations must first apply **only** `supabase/migrations/005_service_health.sql` in Supabase's SQL Editor. New installations apply all migrations in order.
+
+After applying the migration, open GitHub **Actions → Supabase database activity check → Run workflow** and confirm success. Connection failures are retried twice, then fail the job. Enable GitHub Actions failure notifications and watch Supabase's pause-warning emails. The job uses the existing public URL/key variables with project defaults; no private administrative credentials are required.
+
+This is an attempt to maintain activity, not an availability guarantee. GitHub can delay/drop scheduled jobs and disables public-repository schedules after 60 days without repository activity. Re-enable the workflow in Actions if disabled. See [GitHub scheduling limitations](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule). A paused project still requires manual resumption; the job cannot resume it. To stop the checks, disable this workflow in Actions.
 
 Before game night open your Supabase dashboard, select the project, and click **Resume project** if paused. Wait for it to become available and use the app's retry button. GitHub Pages remains available independently. Existing cached characters can be edited offline; shared updates and sign-in resume when the backend is available. The app does not guess that every connection problem means pausing.
 

@@ -1,0 +1,26 @@
+name: Supabase database activity check
+on:
+  schedule:
+    # Three reads per day, away from the busy start of each hour (UTC).
+    - cron: '17 2,10,18 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: supabase-keepalive
+  cancel-in-progress: false
+jobs:
+  database-read:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Read public database health row
+        run: python scripts/supabase_keepalive.py
+        env:
+          SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://gkwbbertvszeomwhslye.supabase.co' }}
+          # Publishable client key only. Never put an admin or service-role key here.
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY || 'sb_publishable_9EIrXlB6W6ch5ganwHkOJw_2GTHhN2W' }}

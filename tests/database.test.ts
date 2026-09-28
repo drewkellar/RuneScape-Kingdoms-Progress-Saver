@@ -35,6 +35,7 @@ beforeAll(async () => {
   await db.exec(storageSql);
   await db.exec(await readFile('supabase/migrations/003_import.sql', 'utf8'));
   await db.exec(await readFile('supabase/migrations/004_confirmed_progression.sql', 'utf8'));
+  await db.exec(await readFile('supabase/migrations/005_service_health.sql', 'utf8'));
   group = (await as<{ id: string }>(host, 'select create_group($1) id', ['Test table'])).rows[0].id;
   const token = (await as<{ token: string }>(host, 'select create_invite($1) token', [group]))
     .rows[0].token;
@@ -46,6 +47,19 @@ afterAll(async () => {
   await db?.close();
 });
 describe.sequential('Real PostgreSQL transactions and access control', () => {
+  it('allows anonymous health reads without granting writes or character access', async () => {
+    const read = await db.transaction(async (tx) => {
+      await tx.exec('set local role anon');
+      return tx.query('select id from service_health');
+    });
+    expect(read.rows).toEqual([{ id: 1 }]);
+    for (const sql of ['delete from service_health', 'select * from characters']) {
+      await expect(db.transaction(async (tx) => {
+        await tx.exec('set local role anon');
+        return tx.exec(sql);
+      })).rejects.toThrow(/permission denied/);
+    }
+  });
   it('returns a complete RLS-filtered snapshot', async () => {
     const result = await as<{ data: { characters: unknown[] } }>(
       player,
